@@ -47,7 +47,7 @@ const PokemonList = () => {
         <h1 className="flex justify-center my-4 font-bold text-2xl">Pokemon List</h1>
 
         {isLoading ? (
-          <p>Loading...</p>
+          <p className='text-center py-4'><span className="loading loading-dots loading-md"></span></p>
         ) : error ? (
           <p>Error: {error}</p>
         ) : (

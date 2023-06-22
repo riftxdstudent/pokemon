@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import MainLayout from "../MainLayout/MainLayout";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import MainLayout from '../MainLayout/MainLayout';
 
-import Pagination from "../components/Pagination";
+import Pagination from '../components/Pagination';
 
 const PokemonList = () => {
   const [pokemonList, setPokemonList] = useState([]);
@@ -13,10 +13,10 @@ const PokemonList = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon/?limit=248")
+    fetch('https://pokeapi.co/api/v2/pokemon/?limit=248')
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error('Failed to fetch data');
         }
         return response.json();
       })
@@ -28,30 +28,9 @@ const PokemonList = () => {
         setError(error.message);
         setIsLoading(false);
       });
-  }, []);
 
-  useEffect(() => {
-    const fetchPokemonDetails = async () => {
-      try {
-        const pokemonWithDetailsPromises = pokemonList.map((pokemon) =>
-          fetch(pokemon.url).then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed to fetch data");
-            }
-            return response.json();
-          })
-        );
-        const pokemonWithDetails = await Promise.all(pokemonWithDetailsPromises);
-        setPokemonList(pokemonWithDetails);
-        const totalPages = Math.ceil(pokemonWithDetails.length / 16);
-        setTotalPages(totalPages);
-      } catch (error) {
-        setError(error.message);
-      }
-      setIsLoading(false);
-    };
-
-    fetchPokemonDetails();
+    const totalPages = Math.ceil(pokemonList.length / 16);
+    setTotalPages(totalPages);
   }, [pokemonList]);
 
   const handlePageChange = (page) => {
@@ -75,8 +54,8 @@ const PokemonList = () => {
           <div className="m-8">
             <div className="grid grid-cols-2 gap-4 mx-4 md:grid-cols-4">
               {displayedPokemon.map((pokemon) => (
-                <div key={pokemon.id} className="border p-4">
-                  <Link to={`/pokemon/${pokemon.id}`} className="flex justify-center text-lg font-bold">
+                <div key={pokemon.name} className="border p-4">
+                  <Link to={`/pokemon/${pokemon.name}`} className="flex justify-center text-lg font-bold">
                     {pokemon.name}
                   </Link>
                 </div>

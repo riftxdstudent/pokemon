@@ -1,16 +1,17 @@
 import React from 'react';
-import PokemonList from './components/PokemonList';
-import PokemonDetail from './components/PokemonDetail';
-import OwnedPokemon from './components/OwnedPokemon';
+import PokemonList from './pages/PokemonList';
+import PokemonDetail from './pages/PokemonDetail';
+import OwnedPokemon from './pages/OwnedPokemon';
+
+import { Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div>
-      <h1>Pokemon List</h1>
-      <PokemonList />
-      <PokemonDetail />
-      <OwnedPokemon />
-    </div>
+    <Routes>
+      <Route path="/" element={<PokemonList />} />
+      <Route path="/pokemon/:id" element={<PokemonDetail />} />
+      <Route path="/owned-pokemon" element={<OwnedPokemon />} />
+    </Routes>
   );
 }
 

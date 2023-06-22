@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import MainLayout from '../MainLayout/MainLayout';
 
-
 const PokemonDetail = () => {
   const { id } = useParams();
   const [pokemonDetails, setPokemonDetails] = useState(null);
@@ -24,8 +23,6 @@ const PokemonDetail = () => {
     };
 
     fetchPokemonDetails();
-
-    console.log(fetchPokemonDetails());
   }, [id]);
 
   if (loading) {

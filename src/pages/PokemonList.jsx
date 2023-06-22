@@ -28,9 +28,30 @@ const PokemonList = () => {
         setError(error.message);
         setIsLoading(false);
       });
+  }, []);
 
-      const totalPages = Math.ceil(pokemonList.length / 16);
-      setTotalPages(totalPages);
+  useEffect(() => {
+    const fetchPokemonDetails = async () => {
+      try {
+        const pokemonWithDetailsPromises = pokemonList.map((pokemon) =>
+          fetch(pokemon.url).then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch data");
+            }
+            return response.json();
+          })
+        );
+        const pokemonWithDetails = await Promise.all(pokemonWithDetailsPromises);
+        setPokemonList(pokemonWithDetails);
+        const totalPages = Math.ceil(pokemonWithDetails.length / 16);
+        setTotalPages(totalPages);
+      } catch (error) {
+        setError(error.message);
+      }
+      setIsLoading(false);
+    };
+
+    fetchPokemonDetails();
   }, [pokemonList]);
 
   const handlePageChange = (page) => {
@@ -53,11 +74,13 @@ const PokemonList = () => {
         ) : (
           <div className="m-8">
             <div className="grid grid-cols-2 gap-4 mx-4 md:grid-cols-4">
-                {displayedPokemon.map((pokemon) => (
-                  <div key={pokemon.name} className="border p-4">
-                    <Link to={`/pokemon/${pokemon.id}/`} className="flex justify-center text-lg font-bold">{pokemon.name}</Link>
-                  </div>
-                ))}
+              {displayedPokemon.map((pokemon) => (
+                <div key={pokemon.id} className="border p-4">
+                  <Link to={`/pokemon/${pokemon.id}`} className="flex justify-center text-lg font-bold">
+                    {pokemon.name}
+                  </Link>
+                </div>
+              ))}
             </div>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>

@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import MainLayout from "../MainLayout/MainLayout";
+import { OwnedPokemonContext } from "../context/OwnedPokemonContext";
 
 const PokemonDetail = () => {
   const { id } = useParams();
   const [pokemonDetails, setPokemonDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isCaught, setIsCaught] = useState(false);
+
+  const { addOwnedPokemon } = useContext(OwnedPokemonContext);
 
   useEffect(() => {
     const fetchPokemonDetails = async () => {
@@ -27,6 +31,30 @@ const PokemonDetail = () => {
     fetchPokemonDetails();
   }, [id]);
 
+  const handleCatch = () => {
+    const successProbability = Math.random();
+    const catchThreshold = 0.5;
+
+    if (successProbability <= catchThreshold) {
+      setIsCaught(true);
+      addOwnedPokemon(pokemonDetails);
+      localStorage.setItem(
+        "ownedPokemon",
+        JSON.stringify([...localStorage.getItem("ownedPokemon"), pokemonDetails])
+      );
+    } else {
+      alert("Failed");
+      setIsCaught(false);
+    }
+  };
+
+  useEffect(() => {
+    const ownedPokemon = JSON.parse(localStorage.getItem("ownedPokemon")) || [];
+    if (ownedPokemon.some((pokemon) => pokemon.id === id)) {
+      setIsCaught(true);
+    }
+  }, [id]);
+
   if (loading) {
     return <div className="flex justify-center py-4"><span className="loading loading-dots loading-md"></span></div>;
   }
@@ -41,6 +69,36 @@ const PokemonDetail = () => {
 
   const { sprites, name, types, weight, height, abilities, moves, stats } =
     pokemonDetails;
+  
+  let catchButton;
+  switch (isCaught) {
+    case false:
+      catchButton = (
+        <>
+          <button
+            className="btn btn-outline btn-warning"
+            onClick={handleCatch}
+          >
+            Catch {name}
+          </button>
+        </>
+      );
+      break;
+    case true:
+      catchButton = (
+        <p className="text-lg text-center text-success">
+          Successfully caught {name}!
+        </p>
+      );
+      break;
+    default:
+      <>
+        <p className="text-lg text-center text-error">
+            Failed to catch {name}. Try again!
+        </p>
+      </>
+      break;
+  }
 
   return (
     <MainLayout>
@@ -136,9 +194,7 @@ const PokemonDetail = () => {
         </div>
       </div>
       
-      <div className="flex justify-center pt-8 pb-16">
-        <button className="btn btn-outline btn-warning">Catch {name}</button>
-      </div>
+      <div className="flex justify-center pt-8 pb-16">{catchButton}</div>
 
     </MainLayout>
   );

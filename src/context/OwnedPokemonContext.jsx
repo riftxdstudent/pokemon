@@ -1,35 +1,32 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const OwnedPokemonContext = createContext();
 
 const OwnedPokemonProvider = ({ children }) => {
-  const [ownedPokemon, setOwnedPokemon] = useState([]);
-
-  useEffect(() => {
-    const storedOwnedPokemon = localStorage.getItem("ownedPokemon");
-    try {
-      if (storedOwnedPokemon) {
-        setOwnedPokemon(JSON.parse(storedOwnedPokemon));
-      }
-    } catch (error) {
-      console.error("Error Parsing owned Pokemon data:", error);
-      setOwnedPokemon([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("ownedPokemon", JSON.stringify(ownedPokemon));
-  }, [ownedPokemon]);
+  const [ownedPokemon, setOwnedPokemon] = useLocalStorage("ownedPokemon", []);
 
   const addOwnedPokemon = (pokemon) => {
     setOwnedPokemon((prevOwnedPokemon) => [...prevOwnedPokemon, pokemon]);
   };
 
+  // const releaseOwnedPokemon = (pokemonId) => {
+  //   setOwnedPokemon((prevOwnedPokemon) =>
+  //     prevOwnedPokemon.map((pokemon) => {
+  //       if (pokemon.id === pokemonId) {
+  //         return { ...pokemon, isCaught: false };
+  //       }
+  //       return pokemon;
+  //     })
+  //   );
+  // };
+  
   const releaseOwnedPokemon = (pokemonId) => {
     setOwnedPokemon((prevOwnedPokemon) =>
       prevOwnedPokemon.filter((pokemon) => pokemon.id !== pokemonId)
     );
   };
+  
 
   return (
     <OwnedPokemonContext.Provider

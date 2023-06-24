@@ -3,13 +3,14 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import MainLayout from "../MainLayout/MainLayout";
 import { OwnedPokemonContext } from "../context/OwnedPokemonContext";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const PokemonDetail = () => {
   const { id } = useParams();
   const [pokemonDetails, setPokemonDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isCaught, setIsCaught] = useState(false);
+  const [isCaught, setIsCaught] = useLocalStorage(`isCaught_${id}`, false);
 
   const { addOwnedPokemon } = useContext(OwnedPokemonContext);
 
@@ -38,22 +39,11 @@ const PokemonDetail = () => {
     if (successProbability <= catchThreshold) {
       setIsCaught(true);
       addOwnedPokemon(pokemonDetails);
-      localStorage.setItem(
-        "ownedPokemon",
-        JSON.stringify([...localStorage.getItem("ownedPokemon"), pokemonDetails])
-      );
     } else {
       alert("Failed");
       setIsCaught(false);
     }
   };
-
-  useEffect(() => {
-    const ownedPokemon = JSON.parse(localStorage.getItem("ownedPokemon")) || [];
-    if (ownedPokemon.some((pokemon) => pokemon.id === id)) {
-      setIsCaught(true);
-    }
-  }, [id]);
 
   if (loading) {
     return <div className="flex justify-center py-4"><span className="loading loading-dots loading-md"></span></div>;

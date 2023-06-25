@@ -27,7 +27,7 @@ const OwnedPokemon = () => {
                   />
                 </figure>
                 <div className="card-body items-center text-center">
-                  <h2 className="card-title">{pokemon.name}</h2>
+                  <h2 className="card-title capitalize">{pokemon.name}</h2>
                   <div className="card-actions">
                     <button className="btn btn-warning" onClick={() => handleRelease(pokemon.id)}>Release</button>
                   </div>
@@ -36,7 +36,7 @@ const OwnedPokemon = () => {
             ))}
           </div>
         ) : (
-          <p>No owned Pokemon available</p>
+          <p className="flex justify-center">No owned Pokemon available</p>
         )}
       </div>
     </MainLayout>
